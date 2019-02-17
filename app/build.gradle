@@ -18,14 +18,62 @@ android {
             keyAlias RELEASE_KEY_ALIAS
             keyPassword RELEASE_KEY_PASSWORD
         }
+
+        myrelease {
+            storeFile file(RELEASE_STOREFILE1);
+            storePassword RELEASE_STORE_PASSWORD1;
+            keyAlias RELEASE_KEY_ALIAS1
+            keyPassword RELEASE_KEY_PASSWORD1
+        }
     }
+    flavorDimensions "default"
+
+    productFlavors {
+        pro {
+            applicationId = "com.yyc.debuydemo"
+            versionCode 1
+            versionName "1.0.0"
+            signingConfig = signingConfigs.release
+            resValue "string", "app_name", "测试1"
+            resValue "bool", "isrRank", 'true'
+            buildConfigField "String",      "SERVER_URL", '"http://www.baidu.com/"'
+
+        }
+        free {
+            applicationId = "com.yyc.mydebuydemo"
+            versionCode 2
+            versionName "1.1.0"
+            signingConfig = signingConfigs.myrelease
+            resValue "string", "app_name", "测试二"
+            resValue "bool", "isrRank", 'true'
+            buildConfigField "String",      "SERVER_URL", '"http://www.github.com/"'
+        }
+
+        // lint检查，防止打包因为一些警告而停止
+        lintOptions {
+            checkReleaseBuilds false
+            abortOnError false
+        }
+        dexOptions {
+
+            javaMaxHeapSize "8g" //此处可根据电脑本身配置 数值越大 当然越快
+
+            preDexLibraries = false
+
+        }
+    }
+
 
 
     buildTypes {
         release {
             minifyEnabled false
+            // 不显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            // 移除无用的resource文件
+//            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            signingConfig null
         }
     }
 }
